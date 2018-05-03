@@ -109,6 +109,68 @@ def Search():
     #                                                                     )
     #         xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=listitem,isFolder=False)
 
+def Download(url):
+    # try: shutil.rmtree(__temp__)
+    # except: pass
+    # try: os.makedirs(__temp__)
+    # except: pass
+
+    subtitle_list = []
+    exts = [".srt", ".sub", ".txt", ".smi", ".ssa", ".ass" ]
+    try:
+        socket = urllib.urlopen(url)
+        data = socket.read()
+        # print data
+        socket.close()
+    except Exception as e:
+        pass
+    else:
+        soup = BeautifulSoup(data,'html.parser')
+        # divs = soup.find_all('div',class_='pull-left lb_r')
+    finally:
+        pass
+    # try:
+    #     data = GetHttpData(url)
+    #     soup = BeautifulSoup(data)
+    #     id = soup.find("button", class_="btn btn-danger btn-sm").get("sid").encode('utf-8')
+    #     url = "http://subhd.com/ajax/down_ajax"
+    #     values = {'sub_id':id}
+    #     para = urllib.urlencode(values)
+    #     data = GetHttpData(url, para)
+    #     match = re.compile('"url":"([^"]+)"').search(data)
+    #     url = match.group(1).replace(r'\/','/').decode("unicode-escape").encode('utf-8')
+    #     data = GetHttpData(url)
+    # except:
+    #     return []
+    # if len(data) < 1024:
+    #     return []
+    # zip = os.path.join(__temp__, "subtitles%s" % os.path.splitext(url)[1])
+    # with open(zip, "wb") as subFile:
+    #     subFile.write(data)
+    # subFile.close()
+    # xbmc.sleep(500)
+    # if data[:4] == 'Rar!' or data[:2] == 'PK':
+    #     xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (zip,__temp__,)).encode('utf-8'), True)
+    # path = __temp__
+    # dirs, files = xbmcvfs.listdir(path)
+    # if len(dirs) > 0:
+    #     path = os.path.join(__temp__, dirs[0].decode('utf-8'))
+    #     dirs, files = xbmcvfs.listdir(path)
+    # list = []
+    # for subfile in files:
+    #     if (os.path.splitext( subfile )[1] in exts):
+    #         list.append(subfile.decode('utf-8'))
+    # if len(list) == 1:
+    #     subtitle_list.append(os.path.join(path, list[0]))
+    # else:
+    #     sel = xbmcgui.Dialog().select('请选择压缩包中的字幕', list)
+    #     if sel == -1:
+    #         sel = 0
+    #     subtitle_list.append(os.path.join(path, list[sel]))
+
+    # print subtitle_list
+
 
 if __name__ == '__main__':
-    Search()
+    # Search()
+    Download('http://www.subhd.com/ar0/325281')
