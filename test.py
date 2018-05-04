@@ -7,13 +7,14 @@ import sys
 import urllib
 import urllib2
 import shutil
+import json
 # import xbmcvfs
 # import xbmcaddon
 # import xbmcgui,xbmcplugin
 from bs4 import BeautifulSoup
 
-SUBHD_API  = 'http://www.subhd.com/search0/%s'
-SUBHD_BASE = 'http://www.subhd.com'
+SUBHD_API  = 'http://subhd.com/search0/%s'
+SUBHD_BASE = 'http://subhd.com/'
 UserAgent  = 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)'
 
 headers = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -115,20 +116,34 @@ def Download(url):
     # try: os.makedirs(__temp__)
     # except: pass
 
+
+
     subtitle_list = []
     exts = [".srt", ".sub", ".txt", ".smi", ".ssa", ".ass" ]
-    try:
-        socket = urllib.urlopen(url)
-        data = socket.read()
-        # print data
-        socket.close()
-    except Exception as e:
-        pass
-    else:
-        soup = BeautifulSoup(data,'html.parser')
-        # divs = soup.find_all('div',class_='pull-left lb_r')
-    finally:
-        pass
+    # try:
+    sub_id = url.split('/')[-1]
+    postData = {'sub_id':sub_id}
+    headers['Referer'] = url
+    postUrl = SUBHD_BASE + 'ajax/down_ajax'
+    print headers
+    print json.dumps(postData)
+    req = urllib2.Request(postUrl,json.dumps(postData),headers=headers)
+    resp = urllib2.urlopen(req)
+    print resp.geturl()
+    print resp.read()
+    # socket = urllib.urlopen(url)
+    # data = socket.read()
+    print url
+    print sub_id
+        # socket.close()
+    # except Exception as e:
+    #     pass
+    # else:
+    #     pass
+    #     # soup = BeautifulSoup(data,'html.parser')
+    #     # divs = soup.find_all('div',class_='pull-left lb_r')
+    # finally:
+    #     pass
     # try:
     #     data = GetHttpData(url)
     #     soup = BeautifulSoup(data)
@@ -173,4 +188,4 @@ def Download(url):
 
 if __name__ == '__main__':
     # Search()
-    Download('http://www.subhd.com/ar0/325281')
+    Download(SUBHD_BASE + 'ar0/325281')
