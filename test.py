@@ -14,15 +14,16 @@ import json
 from bs4 import BeautifulSoup
 
 SUBHD_API  = 'http://subhd.com/search0/%s'
-SUBHD_BASE = 'http://subhd.com/'
+SUBHD_BASE = 'http://subhd.com'
 UserAgent  = 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)'
 
 headers = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
            'Accept-Encoding': 'gzip, deflate, sdch, br',
-           'Accept-Language': 'zh-CN,zh;q=0.8',
-           'Connection': 'keep-alive',
-           'Upgrade-Insecure-Requests': '1',
-           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'}
+        #    'Accept-Language': 'zh-CN,zh;q=0.8',
+        #    'Connection': 'keep-alive',
+        #    'Upgrade-Insecure-Requests': '1',
+           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'
+           }
 
 def Search():
     subtitles_list = []
@@ -50,7 +51,7 @@ def Search():
 
     for i in divs:
         print i.find('div',class_='d_title').getText()
-        print SUBHD_BASE + i.find('div',class_='d_title').a.get('href')
+        print SUBHD_BASE + '/' + i.find('div',class_='d_title').a.get('href')
         span = i.find_all('span',class_='label')
         for j in span: print j.getText()
     # req = urllib2.Request(url)
@@ -124,15 +125,19 @@ def Download(url):
     sub_id = url.split('/')[-1]
     postData = {'sub_id':sub_id}
     headers['Referer'] = url
-    postUrl = SUBHD_BASE + 'ajax/down_ajax'
+    headers['origin'] = SUBHD_BASE
+    headers['Host'] = 'subhd.com'
+    headers['ci_session'] = 'ahnntsb6sf3kbcs8ro3ickvv82pggdre'
+    headers['Hm_lvt_36f45ef10337991c93242d418c95baa3'] = '1525430526'
+    headers['Hm_lpvt_36f45ef10337991c93242d418c95baa3'] = '1525430526'
+    postUrl = SUBHD_BASE + '/ajax/down_ajax'
+    postData = urllib.urlencode(postData)
     print headers
-    print json.dumps(postData)
-    req = urllib2.Request(postUrl,json.dumps(postData),headers=headers)
-    resp = urllib2.urlopen(req)
-    print resp.geturl()
-    print resp.read()
-    # socket = urllib.urlopen(url)
-    # data = socket.read()
+    print postData
+    req = urllib2.Request(postUrl,postData,headers=headers)
+    res = urllib2.urlopen(req)
+    # print resp.geturl()
+    print res.read()
     print url
     print sub_id
         # socket.close()
