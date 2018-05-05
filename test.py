@@ -8,6 +8,7 @@ import urllib
 import urllib2
 import shutil
 import json
+import requests
 # import xbmcvfs
 # import xbmcaddon
 # import xbmcgui,xbmcplugin
@@ -19,9 +20,9 @@ UserAgent  = 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)'
 
 headers = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
            'Accept-Encoding': 'gzip, deflate, sdch, br',
-        #    'Accept-Language': 'zh-CN,zh;q=0.8',
-        #    'Connection': 'keep-alive',
-        #    'Upgrade-Insecure-Requests': '1',
+           'Accept-Language': 'zh-CN,zh;q=0.8',
+           'Connection': 'keep-alive',
+           'Upgrade-Insecure-Requests': '1',
            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'
            }
 
@@ -116,9 +117,10 @@ def Download(url):
     # except: pass
     # try: os.makedirs(__temp__)
     # except: pass
-
-
-
+    headers['Referer'] = SUBHD_BASE
+    req = requests.get(url,headers=headers)
+    cookie = req.cookies['ci_session']
+    # print cookie
     subtitle_list = []
     exts = [".srt", ".sub", ".txt", ".smi", ".ssa", ".ass" ]
     # try:
@@ -127,19 +129,23 @@ def Download(url):
     headers['Referer'] = url
     headers['origin'] = SUBHD_BASE
     headers['Host'] = 'subhd.com'
-    headers['ci_session'] = 'ahnntsb6sf3kbcs8ro3ickvv82pggdre'
-    headers['Hm_lvt_36f45ef10337991c93242d418c95baa3'] = '1525430526'
-    headers['Hm_lpvt_36f45ef10337991c93242d418c95baa3'] = '1525430526'
+    headers['sub_id'] = sub_id
+    headers['ci_session'] = cookie
+
     postUrl = SUBHD_BASE + '/ajax/down_ajax'
-    postData = urllib.urlencode(postData)
-    print headers
-    print postData
-    req = urllib2.Request(postUrl,postData,headers=headers)
-    res = urllib2.urlopen(req)
-    # print resp.geturl()
-    print res.read()
-    print url
-    print sub_id
+
+
+    req = requests.post(postUrl,postData,headers=headers)
+    print req.content
+    # print req.cookies
+    download = json.loads(req.content)['url']
+
+    headers['Host'] = 'dl.subhd.com'
+    req = requests.get(download,headers=headers)
+    # print req.content
+    print download
+    with open('subtitles.zip', "wb") as subFile: subFile.write(req.content)
+    subFile.close()
         # socket.close()
     # except Exception as e:
     #     pass
@@ -193,4 +199,4 @@ def Download(url):
 
 if __name__ == '__main__':
     # Search()
-    Download(SUBHD_BASE + 'ar0/325281')
+    Download(SUBHD_BASE + '/ar0/364775')
